@@ -1,10 +1,10 @@
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: prod-paymentserver
+  name: prod-webserver
   namespace: flux-system
 spec:
-  targetNamespace: prod
+  targetNamespace: default
   dependsOn: 
     - name: infrastucture-configs
   interval: 5m
@@ -13,21 +13,14 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  validation: client
-  healthChecks:
-  - apiVersion: helm.toolkit.fluxcd.io/v1beta1
-    kind: HelmRelease
-    name: paymentserver
-    namespace: prod
   patches:
-    - patch: |-
-        apiVersion: helm.toolkit.fluxcd.io/v2beta1
-        kind: HelmRelease
-        metadata:
-          name: paymentserver
-          namespace: prod 
-        spec:
-          values:
-            image:
-              repository: nginx
-              tag: 1.21.0 
+    - patch: |
+        - op: replace
+          path: /metadata
+          value:
+            name: prod-webserver
+            namespace: default
+      target:
+        kind: Deployment
+        name: nginx-webserver
+        namespace: default
