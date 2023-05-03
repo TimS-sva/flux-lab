@@ -18,6 +18,10 @@ spec:
           value:
             name: prod-webserver
             namespace: default
+        - op: replace
+          path: /spec
+          value:
+            replicas: 3
       target:
         kind: Deployment
         name: nginx-webserver
